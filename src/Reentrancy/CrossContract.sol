@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {MyToken} from "./utils/MyToken.sol";
+import {MyToken} from "./utils/MyTokenERC20.sol";
 /**
  * Contract that swaps 1 ERC20 token for 0.1 ETH.
  * //q  Which state is not up to date when the external call is executed?
