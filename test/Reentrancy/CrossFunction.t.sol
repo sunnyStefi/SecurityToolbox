@@ -25,7 +25,7 @@ contract CrossFunctionTest is Test {
         attacker.attack();
         console.log(accomplice.balance);
         assert(address(attacker).balance == 0.1 ether); 
-        assert(uint256(CrossFunction(victim).balances(accomplice)) == 0.1 ether);
+        assert(uint256(CrossFunction(victim).balances(accomplice)) == 0.1 ether); // we duplicated the amount
     }
 }
 
