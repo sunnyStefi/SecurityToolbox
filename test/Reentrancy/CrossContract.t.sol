@@ -35,6 +35,7 @@ contract CrossContractTest is Test {
         nonce = CrossContractManager(victimContract1).getNonce(); //1
         CrossContractExecutor(victimContract2).executeSwap(nonce);
         assert(address(attacker).balance == 0.1 ether);
+        assert(myToken.balanceOf(address(attacker)) == 0); // if
         vm.stopPrank();
     }
 }
@@ -50,15 +51,10 @@ contract Attacker {
     }
 
     receive() external payable {}
-
-    // fallback() external payable {
+    // receive() external payable {
     //     //when transfer arrives here, the pendingSwap[1] has not been deleted yet
     //     //I can cancel the swap and get another transfer for free
-    //     // nonce = CrossContractManager(victimContract1).getNonce();
-    //     executeCancelSwap();
-    // }
-
-    // function executeCancelSwap() public {
-    //     CrossContractManager(victimContract1).cancelSwap(1);
+    //     try CrossContractManager(victimContract1).cancelSwap(1) {} catch {}
+    //     //best is to create a flag then call ano
     // }
 }

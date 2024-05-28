@@ -3,9 +3,8 @@
 pragma solidity ^0.8.18;
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-
 /**
- * WARN: nonReentrant functions can be reentered by another function
+ * //sending balances to an accomplice
 */
 contract CrossFunction is ReentrancyGuard {
 
@@ -26,7 +25,7 @@ function withdraw(uint256 amount) external nonReentrant {
     balances[msg.sender] = balance - amount;
 }
 
-function transfer(address to, uint256 amount) external { //sending balances to an accomplice
+function transfer(address to, uint256 amount) external { 
     balances[msg.sender] -= amount;
     balances[to] += amount;
 }

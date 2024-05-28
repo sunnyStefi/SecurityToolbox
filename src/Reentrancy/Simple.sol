@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.18;
 /**
- * Issue: outdated piece of STATE when we hand out the execution to an external address
+ * Issue: exploit a piece of outdated state when we hand out the execution to an external address
  * call will execute the receive/fallback function of msg.sender, which can be a contract
  * msg.sender will gain control of execution in his receive function
  */

@@ -72,7 +72,7 @@ contract CrossContractExecutor is ReentrancyGuard {
 
     function executeSwap(uint256 _id) external onlyThisContract nonReentrant {
         CrossContractManager.Swap memory swap = CrossContractManager(manager).getSwap(_id);
-        payable(swap.user).transfer(BASE_FEE * swap.amount); //swap execution
+        payable(swap.user).transfer(BASE_FEE * swap.amount); //swap execution - attack
         manager.cancelSwap(_id);
     }
 }
