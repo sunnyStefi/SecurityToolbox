@@ -2,7 +2,7 @@
 
 import {CrossContractManager, CrossContractExecutor} from "../../src/Reentrancy/CrossContract.sol";
 import {Test, console} from "lib/forge-std/src/Test.sol";
-import {MyToken} from "../../src/Reentrancy/utils/MyToken.sol";
+import {MyToken} from "../../src/utils/MyTokenERC20.sol";
 
 pragma solidity ^0.8.18;
 
